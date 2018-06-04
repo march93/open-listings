@@ -13,11 +13,53 @@ class App extends Component {
     
         this.state = {
             currentPage: 1,
-            listings: []
+            listings: [],
+            nextBtnDisable: false
         };
     }
 
+    prevPage() {
+        // retrieve previous page results
+        request
+            .get('https://thisopenspace.com/lhl-test')
+            .set('Content-Type', 'application/x-www-form-urlencoded')
+            .query({ page: this.state.currentPage - 1 })
+            .end(function(err, res){
+                if (res.body) {
+                    this.setState({
+                        currentPage: this.state.currentPage - 1,
+                        listings: res.body,
+                        nextBtnDisable: false
+                    });
+                }
+        }.bind(this));
+    }
+
+    nextPage() {
+        // retrieve next page results
+        request
+            .get('https://thisopenspace.com/lhl-test')
+            .set('Content-Type', 'application/x-www-form-urlencoded')
+            .query({ page: this.state.currentPage + 1 })
+            .end(function(err, res){
+                if (res.body) {
+                    // Enable/Disable Next Button
+                    var shouldDisable = false;
+                    if (res.body.page_size < this.state.listings.page_size) {
+                        shouldDisable = true;
+                    }
+
+                    this.setState({
+                        currentPage: this.state.currentPage + 1,
+                        listings: res.body,
+                        nextBtnDisable: shouldDisable
+                    });
+                }
+        }.bind(this));
+    }
+
     componentWillMount() {
+        // retrieve initial page results
         request
             .get('https://thisopenspace.com/lhl-test')
             .set('Content-Type', 'application/x-www-form-urlencoded')
@@ -26,7 +68,7 @@ class App extends Component {
                 if (res.body) {
                     this.setState({ listings: res.body });
                 }
-        }.bind(this)); 
+        }.bind(this));
     }
 
     render() {
@@ -42,7 +84,7 @@ class App extends Component {
                                 variant="raised"
                                 color="primary"
                                 className="prev-btn"
-                                disabled={this.state.currentPage == 1}
+                                disabled={this.state.currentPage === 1}
                                 >
                                 Prev
                             </Button>
@@ -51,7 +93,7 @@ class App extends Component {
                                 variant="raised"
                                 color="primary"
                                 className="next-btn"
-                                disabled={this.state.listings.length === 0}
+                                disabled={this.state.nextBtnDisable}
                                 >
                                 Next
                             </Button>
@@ -74,7 +116,7 @@ class App extends Component {
                         variant="raised"
                         color="primary"
                         className="prev-btn"
-                        disabled={this.state.currentPage == 1}
+                        disabled={this.state.currentPage === 1}
                         >
                         Prev
                     </Button>
@@ -83,7 +125,7 @@ class App extends Component {
                         variant="raised"
                         color="primary"
                         className="next-btn"
-                        disabled={this.state.listings.length === 0}
+                        disabled={this.state.nextBtnDisable}
                         >
                         Next
                     </Button>
