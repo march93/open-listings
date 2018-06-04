@@ -3,3 +3,29 @@
     margin: 30px auto;
 }
 
+.subheader {
+    height: auto !important;
+}
+
+.subheader div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.subheader-title {
+    font-family: arial !important;
+    font-weight: 700 !important;
+    font-size: 25px !important;
+    color: #90A4AE !important;
+}
+
+.page-btns {
+    display: flex;
+    justify-content: flex-end;
+    margin: 30px 0;
+}
+
+.page-btns .next-btn {
+    margin-left: 20px;
+}
