@@ -16,46 +16,61 @@ class App extends Component {
             listings: [],
             nextBtnDisable: false
         };
+
+        this.prevDisable = false;
+        this.nextDisable = false;
     }
 
     prevPage() {
         // retrieve previous page results
-        request
-            .get('https://thisopenspace.com/lhl-test')
-            .set('Content-Type', 'application/x-www-form-urlencoded')
-            .query({ page: this.state.currentPage - 1 })
-            .end(function(err, res){
-                if (res.body) {
-                    this.setState({
-                        currentPage: this.state.currentPage - 1,
-                        listings: res.body,
-                        nextBtnDisable: false
-                    });
-                }
-        }.bind(this));
+
+        // Prevent double clicking
+        if (!this.prevDisable) {
+            this.prevDisable = true;
+            request
+                .get('https://thisopenspace.com/lhl-test')
+                .set('Content-Type', 'application/x-www-form-urlencoded')
+                .query({ page: this.state.currentPage - 1 })
+                .end(function(err, res){
+                    if (res.body) {
+                        this.setState({
+                            currentPage: this.state.currentPage - 1,
+                            listings: res.body,
+                            nextBtnDisable: false
+                        });
+                        this.prevDisable = false;
+                    }
+            }.bind(this));
+        }
     }
 
     nextPage() {
         // retrieve next page results
-        request
-            .get('https://thisopenspace.com/lhl-test')
-            .set('Content-Type', 'application/x-www-form-urlencoded')
-            .query({ page: this.state.currentPage + 1 })
-            .end(function(err, res){
-                if (res.body) {
-                    // Enable/Disable Next Button
-                    var shouldDisable = false;
-                    if (res.body.page_size < this.state.listings.page_size) {
-                        shouldDisable = true;
-                    }
 
-                    this.setState({
-                        currentPage: this.state.currentPage + 1,
-                        listings: res.body,
-                        nextBtnDisable: shouldDisable
-                    });
-                }
-        }.bind(this));
+        // Prevent double clicking
+        if (!this.nextDisable) {
+            this.nextDisable = true;
+            request
+                .get('https://thisopenspace.com/lhl-test')
+                .set('Content-Type', 'application/x-www-form-urlencoded')
+                .query({ page: this.state.currentPage + 1 })
+                .end(function(err, res){
+                    if (res.body) {
+                        // Enable/Disable Next Button
+                        var shouldDisable = false;
+                        if (res.body.page_size < this.state.listings.page_size) {
+                            shouldDisable = true;
+                        }
+
+                        this.setState({
+                            currentPage: this.state.currentPage + 1,
+                            listings: res.body,
+                            nextBtnDisable: shouldDisable
+                        });
+                        this.nextDisable = false;
+                    }
+            }.bind(this));
+        }
     }
 
     componentWillMount() {

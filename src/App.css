@@ -29,3 +29,16 @@
 .page-btns .next-btn {
     margin-left: 20px;
 }
+
+@media only screen and (max-width: 438px) {
+    .subheader div {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .page-btns {
+        flex-direction: row !important;
+        justify-content: center !important;
+        width: 100%;
+    }
+}
